@@ -1,24 +1,20 @@
-const multer=require("multer");
+const multer = require("multer");
+const fs = require("fs");
 
+const uploadPath = "uploads/products";
 
-const storage=multer.diskStorage({
-
-destination:(req,file,cb)=>{
-
-cb(null,"uploads/products");
-
-},
-
-
-filename:(req,file,cb)=>{
-
-cb(null,Date.now()+"-"+file.originalname);
-
+// 🔥 auto create folder
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
 }
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  }
 });
 
-
-module.exports=multer({
-storage
-});
+module.exports = multer({ storage });

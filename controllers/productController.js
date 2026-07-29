@@ -10,7 +10,7 @@ const product=new Product({
 
 ...req.body,
 
-image:req.file.filename
+   image: req.file ? req.file.filename : req.body.image
 
 });
 
