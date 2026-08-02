@@ -8,6 +8,8 @@ const productRoutes=require("./routes/productRoutes");
 
 const categoryRoutes=require("./routes/categoryRoutes");
 
+const subcategoryRoutes = require("./routes/subcategoryRoutes");
+
 dotenv.config();
 
 
@@ -19,7 +21,6 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/uploads",express.static("uploads"));
-
 
 
 // database
@@ -66,6 +67,9 @@ app.use(
 "/api/categories",
 categoryRoutes
 );
+
+
+app.use("/api/subcategories", subcategoryRoutes);
 
 app.get("/",(req,res)=>{
 
