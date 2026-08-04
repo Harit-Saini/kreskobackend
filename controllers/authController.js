@@ -180,13 +180,11 @@ exports.changePassword = async (req, res) => {
 
         // Security answer verify
 
-        const answerMatch = await bcrypt.compare(
-
-            answer,
-
-            admin.securityAnswer
-
-        );
+     // ✅ NEW (yahi lagana hai)
+const answerMatch = await bcrypt.compare(
+    answer.trim().toLowerCase(),
+    admin.securityAnswer
+);
 
 
 
