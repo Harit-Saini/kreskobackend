@@ -10,6 +10,11 @@ const categoryRoutes=require("./routes/categoryRoutes");
 
 const subcategoryRoutes = require("./routes/subcategoryRoutes");
 
+const blogRoutes = require("./routes/blogRoutes");
+
+const newsRoutes = require("./routes/newsRoutes");
+
+
 dotenv.config();
 
 
@@ -70,6 +75,10 @@ categoryRoutes
 
 
 app.use("/api/subcategories", subcategoryRoutes);
+
+app.use("/api/blogs", blogRoutes);
+
+app.use("/api/news", newsRoutes);
 
 app.get("/",(req,res)=>{
 
