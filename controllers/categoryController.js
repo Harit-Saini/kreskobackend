@@ -114,10 +114,9 @@ exports.updateCategory = async(req,res)=>{
                 categoryImage
             },
 
-            {
-                new:true
-            }
-
+          {
+           returnDocument:"after"
+              } 
         );
 
 

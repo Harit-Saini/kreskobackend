@@ -1,17 +1,44 @@
 const mongoose = require("mongoose");
 
-const blogSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-  },
-}, { timestamps: true });
 
-module.exports = mongoose.model("Blog", blogSchema);
+const blogSchema = new mongoose.Schema({
+
+title:{
+    type:String,
+    required:true
+},
+
+
+category:{
+    type:String,
+    required:true,
+    enum:[
+        "Technology",
+        "Operations",
+        "Sustainability"
+    ]
+},
+
+
+description:{
+    type:String,
+    required:true
+},
+
+
+content:{
+    type:String,
+    required:true
+},
+
+
+image:{
+    type:String,
+    default:""
+}
+
+
+},{timestamps:true});
+
+
+module.exports = mongoose.model("Blog",blogSchema);

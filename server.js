@@ -14,6 +14,11 @@ const blogRoutes = require("./routes/blogRoutes");
 
 const newsRoutes = require("./routes/newsRoutes");
 
+const adminSettingsRoutes = require("./routes/adminSettingsRoutes");
+
+const catalogRoutes = require("./routes/catalogRoutes");
+
+const faqRoutes = require("./routes/faqRoutes");
 
 dotenv.config();
 
@@ -79,6 +84,21 @@ app.use("/api/subcategories", subcategoryRoutes);
 app.use("/api/blogs", blogRoutes);
 
 app.use("/api/news", newsRoutes);
+
+app.use(
+"/api/admin/settings",
+adminSettingsRoutes
+);
+
+app.use(
+"/api/catalog",
+catalogRoutes
+);
+
+app.use(
+"/api/faqs",
+faqRoutes
+);
 
 app.get("/",(req,res)=>{
 

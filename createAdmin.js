@@ -1,53 +1,30 @@
-const mongoose=require("mongoose");
-const dotenv=require("dotenv");
-const bcrypt=require("bcrypt");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const bcrypt = require("bcrypt");
 
-const Admin=require("./models/Admin");
-
+const Admin = require("./models/Admin");
 
 dotenv.config();
 
-
 mongoose.connect(process.env.MONGO_URI)
-.then(async()=>{
+.then(async () => {
 
+  await Admin.deleteMany(); // 🧹 clean DB (important)
 
-const passwordHash = await bcrypt.hash(
-"admin123",
-10
-);
+  const passwordHash = await bcrypt.hash("admin123", 10);
 
+  const answerHash = await bcrypt.hash("ahmedabad", 10); // ✅ FINAL ANSWER
 
-const answerHash = await bcrypt.hash(
-"kresko",
-10
-);
+  await Admin.create({
+    name: "Kresko Admin",
+    password: passwordHash,
+    securityQuestion: "What is Kresko primary location?",
+    securityAnswer: answerHash
+  });
 
+  console.log("✅ Admin Created");
 
-
-await Admin.create({
-
-name:"Kresko Admin",
-
-password:passwordHash,
-
-securityQuestion:
-"What is Kresko primary location?",
-
-securityAnswer:answerHash
-
-});
-
-
-console.log("Admin Created ✅");
-
-
-mongoose.connection.close();
-
+  mongoose.connection.close();
 
 })
-.catch(err=>{
-
-console.log(err);
-
-});
+.catch(err => console.log(err));
