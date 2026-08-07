@@ -1,45 +1,44 @@
 const express = require("express");
-
 const router = express.Router();
 
-
 const {
-saveCatalog,
-getCatalog,
-deleteCatalog
-
-}=require("../controllers/catalogController");
-
+  saveCatalog,
+  getCatalog,
+  deleteCatalog
+} = require("../controllers/catalogController");
 
 const upload = require("../middleware/catalogUploadMiddleware");
-
-
 const authMiddleware = require("../middleware/authMiddleware");
 
 
-
-// Admin Upload PDF
-
+// ===========================
+// ADMIN: ADD / UPDATE CATALOG
+// ===========================
 router.post(
-"/save",
-authMiddleware,
-upload.single("pdf"),
-saveCatalog
+  "/save",
+  authMiddleware,
+  upload.single("file"),   // ✅ IMPORTANT: field name = "file"
+  saveCatalog
 );
 
 
-
-// Public Download Link
-
+// ===========================
+// PUBLIC: GET CATALOG
+// ===========================
 router.get(
-"/",
-getCatalog
+  "/",
+  getCatalog
 );
 
+
+// ===========================
+// ADMIN: DELETE CATALOG BY ID
+// ===========================
 router.delete(
-"/delete/:id",
-authMiddleware,
-deleteCatalog
+  "/delete/:id",
+  authMiddleware,
+  deleteCatalog
 );
+
 
 module.exports = router;

@@ -2,209 +2,120 @@ const Catalog = require("../models/Catalog");
 const fs = require("fs");
 
 
-
 // ===========================
 // ADD / UPDATE CATALOG
 // ===========================
+exports.saveCatalog = async (req, res) => {
+  try {
+    let catalog = await Catalog.findOne();
 
-exports.saveCatalog = async(req,res)=>{
+    let pdfFile = "";
+    let fileName = "";
+    let fileSize = "";
 
+    if (req.file) {
+      pdfFile = "/uploads/catalogs/" + req.file.filename;
+      fileName = req.file.originalname;
 
-try{
+      // Convert bytes to MB
+      fileSize = (req.file.size / (1024 * 1024)).toFixed(2) + " MB";
+    }
 
-
-let catalog = await Catalog.findOne();
-
-
-let pdfFile = "";
-
-
-if(req.file)
-{
-    pdfFile = "/uploads/catalogs/" + req.file.filename;
-}
-
-
-
-if(!catalog)
-{
-
-    catalog = new Catalog({
-
+    if (!catalog) {
+      catalog = new Catalog({
         file: pdfFile,
+        pdfLink: req.body.pdfLink || "",
+        fileName,
+        fileSize,
+      });
+    } else {
 
-        pdfLink: req.body.pdfLink || ""
+      // 🔥 OLD FILE DELETE (IMPORTANT)
+      if (req.file && catalog.file) {
+        const oldPath = "." + catalog.file;
 
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+
+      catalog.file = pdfFile || catalog.file;
+      catalog.pdfLink = req.body.pdfLink || catalog.pdfLink;
+      catalog.fileName = fileName || catalog.fileName;
+      catalog.fileSize = fileSize || catalog.fileSize;
+    }
+
+    await catalog.save();
+
+    res.status(200).json({
+      message: "Catalog saved successfully",
+      catalog,
     });
 
-
-}
-else
-{
-
-    catalog.file = pdfFile || catalog.file;
-
-    catalog.pdfLink = req.body.pdfLink || catalog.pdfLink;
-
-}
-
-
-
-await catalog.save();
-
-
-
-res.status(200).json({
-
-    message:"Catalog saved successfully",
-
-    catalog
-
-});
-
-
-}
-catch(error)
-{
-
-res.status(500).json({
-
-message:error.message
-
-});
-
-}
-
-
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
-
-
-
-
 
 
 
 // ===========================
 // GET PUBLIC CATALOG
 // ===========================
+exports.getCatalog = async (req, res) => {
+  try {
+    const catalog = await Catalog.findOne();
 
-exports.getCatalog = async(req,res)=>{
+    if (!catalog) {
+      return res.status(404).json({
+        message: "Catalog not found",
+      });
+    }
 
+    res.json(catalog);
 
-try{
-
-
-const catalog = await Catalog.findOne();
-
-
-if(!catalog)
-{
-
-return res.status(404).json({
-
-message:"Catalog not found"
-
-});
-
-}
-
-
-
-res.json(catalog);
-
-
-}
-catch(error)
-{
-
-res.status(500).json({
-
-message:error.message
-
-});
-
-}
-
-
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
-
-
-
-
-
 
 
 
 // ===========================
 // DELETE CATALOG BY ID
 // ===========================
+exports.deleteCatalog = async (req, res) => {
+  try {
+    const catalog = await Catalog.findById(req.params.id);
 
-exports.deleteCatalog = async(req,res)=>{
+    if (!catalog) {
+      return res.status(404).json({
+        message: "Catalog not found",
+      });
+    }
 
+    // Delete file
+    if (catalog.file) {
+      const filePath = "." + catalog.file;
 
-try{
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
 
+    await Catalog.findByIdAndDelete(req.params.id);
 
-const catalog = await Catalog.findById(req.params.id);
+    res.json({
+      message: "Catalog deleted successfully",
+    });
 
-
-
-if(!catalog)
-{
-
-return res.status(404).json({
-
-message:"Catalog not found"
-
-});
-
-}
-
-
-
-// Delete PDF file from uploads folder
-
-if(catalog.file)
-{
-
-const filePath = "." + catalog.file;
-
-
-if(fs.existsSync(filePath))
-{
-
-fs.unlinkSync(filePath);
-
-}
-
-}
-
-
-
-// Delete catalog from database
-
-await Catalog.findByIdAndDelete(req.params.id);
-
-
-
-res.json({
-
-message:"Catalog deleted successfully"
-
-});
-
-
-}
-catch(error)
-{
-
-res.status(500).json({
-
-message:error.message
-
-});
-
-}
-
-
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
